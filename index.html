@@ -1,0 +1,127 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pure JS & Lit Charts library</title>
+    <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js"></script>
+    <script src="SeriesBy.js"></script>
+    <script src="ChartData.js"></script>
+    <script src="ChartOptions.js"></script>
+    <script src="Chart.js"></script>
+    <script src="FormattedChart.js"></script>
+    <script src="GridChart.js"></script>
+    <script src="DatumChart.js"></script>
+    <script src="C3Chart.js"></script>
+    <script src="BarChart.js"></script>
+    <script src="LineChart.js"></script>
+    <script type="module" src="chart-element.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.css" type="text/css">
+</head>
+
+<body>
+
+    <style>
+        tbody tr th {
+            width: 100%;
+            max-width: 0;
+            min-width: 70px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-align: left;
+        }
+    </style>
+
+    <div style="height:100px;">
+        <select id="chartOptionsType">
+            <option value="grid">Grid</option>
+            <option value="datum">Datum</option>
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+        </select>
+        <select id="chartOptionsSeriesBy">
+            <option value="row">Row</option>
+            <option value="column">Column</option>
+        </select>
+        <div>Chart Type: <span id="chartType"></span>, Data Series By: <span id="chartSeriesBy"></span></div>
+        <div>Chart Data: <span id="chartData"></span></div>
+
+        <chart-element></chart-element>
+    </div>
+
+</body>
+
+<script>
+    const data3 = {
+        "total":13,
+        "unassigned":6,
+        "assigned":7,
+        "statuses":[
+            {"key":"COMPLETE-CLOSED","displays":{"en-US":"Complete-Closed"},"count":0,"percent":0},
+            {"key":"NOT_CONTACTED","displays":{"en-US":"Not contacted"},"count":12,"percent":0.9230769348144531},
+            {"key":"FOLLOW_UP","displays":{"en-US":"Follow Up"},"count":1,"percent":0.07692307472229004},
+            {"key":"CONTACTED","displays":{"en-US":"Contacted"},"count":0,"percent":0},
+            {"key":"COMPLETE-DECLINED","displays":{"en-US":"Complete-Declined"},"count":0,"percent":0}
+        ]
+    };
+
+    const grid = new ChartData();
+    for (const status of data3.statuses) {
+        grid.rows.push(status.key);
+        grid.data.push([status.count, status.percent]);
+    }
+    grid.columns = ["count", "percent"];
+
+    const chartOptions = {
+        title: "Lead Progress",
+        type: ChartTypes.GRID,
+        seriesBy: SeriesBy.ROW,
+        showRowLabels: true,
+        showColumnLabels: true,
+        format: {
+            columns: {
+                percent: d3.format(".1%")
+            }//,
+        //series: {
+        //    percent: d3.format(".1%")
+        //}
+        }
+    };
+    const chart = document.querySelector('chart-element');
+    chart.data = grid;
+    chart.options = chartOptions;
+
+    // type select
+    const selectType = document.querySelector('#chartOptionsType');
+    selectType.value = chartOptions.type;
+
+    // seriesBy select
+    const selectSeriesBy = document.querySelector('#chartOptionsSeriesBy');
+    selectSeriesBy.value = chartOptions.seriesBy;
+
+    // display initial values
+    const chartTypeSpan = document.querySelector("#chartType");
+    chartTypeSpan.textContent = chartOptions.type;
+    const chartSeriesBySpan = document.querySelector("#chartSeriesBy");
+    chartSeriesBySpan.textContent = chartOptions.seriesBy;
+    const chartDataSpan = document.querySelector("#chartData");
+    chartDataSpan.textContent = JSON.stringify(chart.data);
+
+    // on chartOptionsType change, update options & display
+    selectType.addEventListener('change', e => {
+        chart.options.type = e.target.value;
+        chartTypeSpan.textContent = chart.options.type;
+        chartDataSpan.textContent = JSON.stringify(chart.data);
+        chart.renderChart();
+    });
+    // on chartOptionsSeriesBy change, update options & display
+    selectSeriesBy.addEventListener('change', e => {
+        chart.options.seriesBy = e.target.value;
+        chartSeriesBySpan.textContent = chart.options.seriesBy;
+        chartDataSpan.textContent = JSON.stringify(chart.data);
+        chart.renderChart();
+    });
+</script>
+
+</html>
