@@ -4,9 +4,9 @@ class DatumChartImpl extends FormattedChart {
     }
 
     render(selector) {
-        var container = d3.select(selector);
+        const container = d3.select(selector);
 
-        var article = container.append("article");
+        const article = container.append("article");
 
         article.selectAll("h4")
             .data([this.options.title])
@@ -14,11 +14,10 @@ class DatumChartImpl extends FormattedChart {
             .append("h4")
             .text(d => d);
 
-        var sectionsDiv = article.append("div")
+        const sections = article.append("div")
             .classed("sections", true)
-            .style("display", "flex");
-
-        var sections = sectionsDiv.selectAll("section")
+            .style("display", "flex")
+            .selectAll("section")
             .data(this.seriesData.series.map(serie => serie.name))
             .enter()
             .append("section")
@@ -28,10 +27,10 @@ class DatumChartImpl extends FormattedChart {
             .text(d => d);
 
         sections.each((d, i,  n) => {
-            var rows = d3.select(n[i])
+            const rows = d3.select(n[i])
                 .selectAll("div")
                 .data(this.seriesData.categories.map((cat, j) => {
-                    var row = {};
+                    const row = {};
                     row.name = cat;
                     row.value = this.seriesData.series[i].data[j];
                     return row;
