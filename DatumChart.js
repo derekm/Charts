@@ -28,6 +28,7 @@ class DatumChartImpl extends FormattedChart {
 
         sections.each((d, i,  n) => {
             const rows = d3.select(n[i])
+                .append("dl")
                 .selectAll("div")
                 .data(this.seriesData.categories.map((cat, j) => {
                     const row = {};
@@ -43,7 +44,7 @@ class DatumChartImpl extends FormattedChart {
                 .selectAll(".datum-label")
                 .data(row => [row.name])
                 .enter()
-                .append("div")
+                .append("dt")
                 .classed("datum-label", true)
                 .text(d => d);
 
@@ -51,10 +52,11 @@ class DatumChartImpl extends FormattedChart {
                 .selectAll(".datum-value")
                 .data(row => [row.value])
                 .enter();
+            // this is now technically incorrect to do for <dl> description lists
             if (this.options.renderDatumLabelFirst) {
-                continuation = continuation.append("div");
+                continuation = continuation.append("dd");
             } else {
-                continuation = continuation.insert("div", ":first-child");
+                continuation = continuation.insert("dd", ":first-child");
             }
             continuation
                 .classed("datum-value", true)
