@@ -23,6 +23,8 @@ export class ChartElement extends LitElement {
         `;
     }
 
+    createRenderRoot() { return this; }
+
     render() {
         return when(!this.options, () => html`
             <div class="loader">👀</div>
@@ -40,7 +42,7 @@ export class ChartElement extends LitElement {
     }
 
     renderChart() {
-        const element = this.shadowRoot.querySelector('.chart');
+        const element = this.querySelector('.chart');
         element.textContent = undefined;
         const type = this.options?.type;
         const downloadFileName = this.options?.fileName ? this.options.fileName : 'download';
